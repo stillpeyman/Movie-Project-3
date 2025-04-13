@@ -1,0 +1,47 @@
+{
+    "The Shawshank Redemption": {
+        "year": "1994",
+        "rating": 9.5,
+        "poster": ""
+    },
+    "Anora": {
+        "year": "2024",
+        "rating": 9.8,
+        "poster": ""
+    },
+    "Good Fellas": {
+        "year": "1990",
+        "rating": 9.8,
+        "poster": ""
+    },
+    "There Will Be Blood": {
+        "year": "2007",
+        "rating": 9.9,
+        "poster": ""
+    },
+    "2001: A Space Odyssey": {
+        "year": "1968",
+        "rating": 10.0,
+        "poster": ""
+    },
+    "Shining": {
+        "year": "1980",
+        "rating": 9.95,
+        "poster": ""
+    },
+    "Apocalypse Now": {
+        "year": "1979",
+        "rating": 9.87,
+        "poster": ""
+    },
+    "Interstellar": {
+        "year": "2014",
+        "rating": 9.8,
+        "poster": ""
+    },
+    "Lawrence Of Arabia": {
+        "year": "1962",
+        "rating": 10.0,
+        "poster": ""
+    }
+}
