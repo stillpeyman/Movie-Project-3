@@ -1,46 +1,47 @@
 {
     "The Shawshank Redemption": {
+        "year": "1994",
         "rating": 9.5,
-        "year": 1994
-    },
-    "Pulp Fiction": {
-        "rating": 8.8,
-        "year": 1994
-    },
-    "The Room": {
-        "rating": 3.6,
-        "year": 2015
-    },
-    "The Godfather": {
-        "rating": 9.2,
-        "year": 1972
-    },
-    "The Godfather: Part II": {
-        "rating": 9.0,
-        "year": 1974
-    },
-    "The Dark Knight": {
-        "rating": 9.0,
-        "year": 2008
-    },
-    "12 Angry Men": {
-        "rating": 8.9,
-        "year": 1957
-    },
-    "Everything Everywhere All At Once": {
-        "rating": 8.9,
-        "year": 2022
-    },
-    "Forrest Gump": {
-        "rating": 8.8,
-        "year": 1994
-    },
-    "Star Wars: Episode V": {
-        "rating": 8.7,
-        "year": 1980
+        "poster": ""
     },
     "Anora": {
+        "year": "2024",
         "rating": 9.8,
-        "year": 2024
+        "poster": ""
+    },
+    "Good Fellas": {
+        "year": "1990",
+        "rating": 9.8,
+        "poster": ""
+    },
+    "There Will Be Blood": {
+        "year": "2007",
+        "rating": 9.9,
+        "poster": ""
+    },
+    "2001: A Space Odyssey": {
+        "year": "1968",
+        "rating": 10.0,
+        "poster": ""
+    },
+    "Shining": {
+        "year": "1980",
+        "rating": 9.95,
+        "poster": ""
+    },
+    "Apocalypse Now": {
+        "year": "1979",
+        "rating": 9.87,
+        "poster": ""
+    },
+    "Interstellar": {
+        "year": "2014",
+        "rating": 9.8,
+        "poster": ""
+    },
+    "Lawrence Of Arabia": {
+        "year": "1962",
+        "rating": 10.0,
+        "poster": ""
     }
 }
