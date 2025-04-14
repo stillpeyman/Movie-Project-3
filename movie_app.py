@@ -1,14 +1,16 @@
 import random
 from fuzzywuzzy import process
 import datetime
+import omdb_api
 
 
 class MovieApp:
-    def __init__(self, storage):
+    def __init__(self, json_storage, csv_storage):
         """
         Initialize the MovieApp with a given storage.
         """
-        self._storage = storage
+        self._json_storage = json_storage
+        self._csv_storage = csv_storage
 
 
     def _command_list_movies(self):
@@ -16,7 +18,7 @@ class MovieApp:
         List all movies stored in the app
         with their title, year, and rating.
         """
-        movies = self._storage.list_movies()
+        movies = self._json_storage.list_movies()
         print(f"{len(movies)} movies in total:")
         for title, info in movies.items():
             print(f"{title} ({info['year']}): {info['rating']}")
@@ -39,56 +41,20 @@ class MovieApp:
                 print("Invalid input! Title cannot be empty.")
                 continue
 
-            if self._storage.movie_exist(new_title):
+            if self._json_storage.movie_exist(new_title):
                 continue
 
-            else:
-                break
-
-            # default initialization
-        new_rating = None
-        while True:
-            rating_input = input("Enter new movie rating between 0 and 10 (or 'q' to cancel): ")
-
-            if rating_input.lower() == 'q':
-                print("Action cancelled.")
-                return
-
             try:
-                new_rating = float(rating_input.replace(",", "."))
-                if not 0 <= new_rating <= 10:
-                    print("Invalid rating! Please enter a number between 0 and 10.")
-                    continue
+                movie_json = omdb_api.get_json(new_title)
+                movie_csv = omdb_api.get_csv(new_title)
                 break
 
-            except ValueError:
-                print("Invalid rating! Please enter a number between 0 and 10.")
+            except ValueError as e:
+                print(f"{str(e)}")
                 continue
 
-        while True:
-            # get current year
-            current_year = datetime.datetime.now().year
-            new_year = input("Enter year of release (or 'q' to cancel): ").strip()
-
-            if new_year.lower() == "q":
-                print("Action cancelled.")
-                return
-
-            try:
-                year = int(new_year)
-
-                if year < 1900 or year > current_year:
-                    print(f"Invalid year! Please enter a valid year between 1900 and {current_year}.")
-                    continue
-
-                break
-
-            except ValueError:
-                print(f"Invalid year! Please enter a valid number.")
-
-        poster = input("Enter poster URL (optional): ").strip()
-
-        self._storage.add_movie(new_title, new_year, new_rating, poster)
+        self._json_storage.add_movie(movie_json["Title"], movie_json["Year"], movie_json["imdbRating"], movie_json["Poster"])
+        self._csv_storage.add_movie(movie_csv["Title"], movie_csv["Year"], movie_csv["imdbRating"], movie_csv["Poster"])
         print(f"Movie {new_title} successfully added")
 
 
@@ -109,8 +75,8 @@ class MovieApp:
                 print("Invalid input! Title cannot be empty.")
                 continue
 
-            self._storage.delete_movie(title)
-            print(f"Movie {title} successfully deleted")
+            self._json_storage.delete_movie(title)
+            self._csv_storage.delete_movie(title)
             break
 
 
@@ -130,7 +96,7 @@ class MovieApp:
                 print("Invalid input! Title cannot be empty.")
                 continue
 
-            if not self._storage.movie_exist(title):
+            if not self._json_storage.movie_exist(title):
                 continue
 
             else:
@@ -149,7 +115,8 @@ class MovieApp:
                     print(f"Invalid rating! Please enter a number between 0 and 10.")
                     continue
 
-                self._storage.update_movie(title, new_rating)
+                self._json_storage.update_movie(title, new_rating)
+                self._csv_storage.update_movie(title, new_rating)
                 print(f"Movie {title} successfully updated")
                 break
 
@@ -163,7 +130,7 @@ class MovieApp:
         including average, median, best,
         and worst ratings.
         """
-        movies = self._storage.list_movies()
+        movies = self._json_storage.list_movies()
 
         sorted_ratings = sorted(info["rating"] for info in movies.values())
 
@@ -202,7 +169,7 @@ class MovieApp:
         """
         Suggest a random movie from the storage for the user to watch.
         """
-        movies = self._storage.list_movies()
+        movies = self._json_storage.list_movies()
 
         database_tuple_ls = list(movies.items())
         random_selection = random.choice(database_tuple_ls)
@@ -214,7 +181,7 @@ class MovieApp:
         Search for movies based on a partial
         name using fuzzy string matching.
         """
-        movies = self._storage.list_movies()
+        movies = self._json_storage.list_movies()
 
         while True:
             title = input("Enter part of the movie name (or 'q' to cancel): ").casefold()
@@ -248,7 +215,7 @@ class MovieApp:
         """
         Sort and display all movies by their rating in descending order.
         """
-        movies = self._storage.list_movies()
+        movies = self._json_storage.list_movies()
 
         sorted_movie_list = sorted(movies.items(), key=lambda item: item[1]["rating"], reverse=True)
         for movie in sorted_movie_list:

@@ -67,10 +67,7 @@ class StorageJson(IStorage):
             bool: True if the movie exists, otherwise False.
         """
         movies = self.list_movies()
-        if title in movies:
-            print(f"Movie {title} already exists.")
-            return True
-        return False
+        return title in movies
 
 
     def add_movie(self, title, year, rating, poster):
@@ -102,10 +99,11 @@ class StorageJson(IStorage):
         """
         movies = self.list_movies()
 
-        if self.movie_exist(title):
-            del movies[title]
-        else:
+        if not self.movie_exist(title):
             print(f"Movie '{title}' not found.")
+        else:
+            del movies[title]
+            print(f"Movie {title} successfully deleted")
 
         self._save_to_file(movies)
 
@@ -120,9 +118,9 @@ class StorageJson(IStorage):
         """
         movies = self.list_movies()
 
-        if self.movie_exist(title):
-            movies[title].update({"rating": rating})
-        else:
+        if not self.movie_exist(title):
             print(f"Movie '{title}' not found.")
+        else:
+            movies[title].update({"rating": rating})
 
         self._save_to_file(movies)
