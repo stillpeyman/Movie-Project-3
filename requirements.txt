@@ -2,6 +2,6 @@ fuzzywuzzy==0.18.0
 Levenshtein==0.27.1
 python-dotenv==1.1.0
 python-Levenshtein==0.27.1
-requests==2.31.0
+requests==2.32.0
 
 

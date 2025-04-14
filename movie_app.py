@@ -30,32 +30,31 @@ class MovieApp:
         new movie and adds it to the storage.
         """
         while True:
-            new_title = input("Enter new movie name (or 'q' to cancel): ").title()
+            user_input = input("Enter new movie name (or 'q' to cancel): ").title()
 
-            if new_title.lower() == 'q':
+            if user_input.lower() == 'q':
                 print("Action cancelled.")
                 return
 
             # check if title is empty string
-            if not new_title.strip():
+            if not user_input.strip():
                 print("Invalid input! Title cannot be empty.")
                 continue
 
-            if self._json_storage.movie_exist(new_title):
+            if self._json_storage.movie_exist(user_input):
                 continue
 
             try:
-                movie_json = omdb_api.get_json(new_title)
-                movie_csv = omdb_api.get_csv(new_title)
+                movie_data = omdb_api.get_movie_data(user_input)
                 break
 
             except ValueError as e:
                 print(f"{str(e)}")
                 continue
 
-        self._json_storage.add_movie(movie_json["Title"], movie_json["Year"], movie_json["imdbRating"], movie_json["Poster"])
-        self._csv_storage.add_movie(movie_csv["Title"], movie_csv["Year"], movie_csv["imdbRating"], movie_csv["Poster"])
-        print(f"Movie {new_title} successfully added")
+        self._json_storage.add_movie(movie_data["Title"], movie_data["Year"], movie_data["imdbRating"], movie_data["Poster"])
+        self._csv_storage.add_movie(movie_data["Title"], movie_data["Year"], movie_data["imdbRating"], movie_data["Poster"])
+        print(f"Movie {user_input} successfully added")
 
 
     def _command_delete_movie(self):
@@ -63,48 +62,118 @@ class MovieApp:
         Prompt user to enter a movie title
         to delete from storage.
         """
-        while True:
-            title = input("Enter movie name to delete (or 'q' to cancel): ").title()
+        movies = self._json_storage.list_movies()
 
-            if title.lower() == "q":
+        while True:
+            user_input = input("Enter part of the movie title (or 'q' to cancel): ").casefold()
+
+            if user_input.lower() == "q":
+                print("Action cancelled.")
+                return
+
+            # check for empty string
+            if not user_input.strip():
+                print("Invalid input! Title cannot be empty.")
+                continue
+
+            # fuzzymatch module: using process.extract() to get best matches
+            best_matches = process.extract(user_input, movies.keys(), limit=5)
+
+            # manually filter matches based on score threshold
+            filtered_matches = [(movie, score) for movie, score in best_matches if score >= 70]
+            sorted_filtered_matches = sorted(filtered_matches, key=lambda item: item[1], reverse=True)
+
+            if sorted_filtered_matches:
+                for i in range(len(sorted_filtered_matches)):
+                    print(f"{i + 1}. {sorted_filtered_matches[i][0]}")
+                break
+
+            else:
+                print(f"No matches found, try again ...")
+                continue
+
+        while True:
+            user_choice = input("\nChoose the movie to delete by entering the number (or 'q' to cancel): ").strip()
+
+            if user_choice.lower() == "q":
                 print("Action cancelled.")
                 return
 
             # check if title is empty string
-            if not title.strip():
-                print("Invalid input! Title cannot be empty.")
+            if not user_choice.strip():
+                print("Invalid input! Your choice cannot be empty.")
                 continue
 
-            self._json_storage.delete_movie(title)
-            self._csv_storage.delete_movie(title)
-            break
+            if not user_choice.isdigit():
+                print("Invalid input! Pick the number for the movie.")
+                continue
+
+            else:
+                movie_to_delete = sorted_filtered_matches[int(user_choice) - 1][0]
+                break
+
+        self._json_storage.delete_movie(movie_to_delete)
+        self._csv_storage.delete_movie(movie_to_delete)
 
 
     def _command_update_movie(self):
         """
         Prompt user to update the rating of an existing movie.
         """
-        while True:
-            title = input("Enter movie name (or 'q' to cancel): ").title()
+        movies = self._json_storage.list_movies()
 
-            if title.lower() == "q":
+        while True:
+            user_input = input("Enter part of the movie title (or 'q' to cancel): ").casefold()
+
+            if user_input.lower() == "q":
+                print("Action cancelled.")
+                return
+
+            # check for empty string
+            if not user_input.strip():
+                print("Invalid input! Title cannot be empty.")
+                continue
+
+            # fuzzymatch module: using process.extract() to get best matches
+            best_matches = process.extract(user_input, movies.keys(), limit=5)
+
+            # manually filter matches based on score threshold
+            filtered_matches = [(movie, score) for movie, score in best_matches if score >= 70]
+            sorted_filtered_matches = sorted(filtered_matches, key=lambda item: item[1], reverse=True)
+
+            if sorted_filtered_matches:
+                for i in range(len(sorted_filtered_matches)):
+                    print(f"{i + 1}. {sorted_filtered_matches[i][0]}")
+                break
+
+            else:
+                print(f"No matches found, try again ...")
+                continue
+
+        while True:
+            user_choice = input("\nChoose the movie by entering the number (or 'q' to cancel): ").strip()
+
+            if user_choice.lower() == "q":
                 print("Action cancelled.")
                 return
 
             # check if title is empty string
-            if not title.strip():
-                print("Invalid input! Title cannot be empty.")
+            if not user_choice.strip():
+                print("Invalid input! Your choice cannot be empty.")
                 continue
 
-            if not self._json_storage.movie_exist(title):
+            if not user_choice.isdigit():
+                print("Invalid input! Pick the number for the movie.")
                 continue
 
             else:
+                movie_to_update = sorted_filtered_matches[int(user_choice) - 1][0]
+                print(f"You can update the rating for '{movie_to_update}' ...")
                 break
 
         while True:
             try:
-                rating = input("Enter new movie rating between 0 and 10 (or 'q' to cancel): ")
+                rating = input("\nEnter a new rating between 0 and 10 (or 'q' to cancel): ")
 
                 if rating.lower() == "q":
                     print("Action cancelled.")
@@ -115,9 +184,9 @@ class MovieApp:
                     print(f"Invalid rating! Please enter a number between 0 and 10.")
                     continue
 
-                self._json_storage.update_movie(title, new_rating)
-                self._csv_storage.update_movie(title, new_rating)
-                print(f"Movie {title} successfully updated")
+                self._json_storage.update_movie(movie_to_update, str(new_rating))
+                self._csv_storage.update_movie(movie_to_update, str(new_rating))
+                print(f"Movie {movie_to_update} successfully updated")
                 break
 
             except ValueError:
@@ -132,7 +201,7 @@ class MovieApp:
         """
         movies = self._json_storage.list_movies()
 
-        sorted_ratings = sorted(info["rating"] for info in movies.values())
+        sorted_ratings = sorted(float(info["rating"]) for info in movies.values())
 
         average_rating = sum(sorted_ratings) / len(sorted_ratings)
         print(f"Average rating: {round(average_rating, 2)}")
@@ -145,24 +214,23 @@ class MovieApp:
         else:
             median_rating = sorted_ratings[mid_index]
 
-        print(f"Median rating: {median_rating}")
+        print(f"Median rating: {round(median_rating, 2)}")
 
-        best_rating = max(info["rating"] for info in movies.values())
-        best_movies = [title for title, info in movies.items() if info["rating"] == best_rating]
+        highest_rating = max(float(info["rating"]) for info in movies.values())
+        highest_rated_movies = [title for title, info in movies.items() if float(info["rating"]) == highest_rating]
 
-        if len(best_movies) == 1:
-            print(f"Best movie: {best_movies[0]}, {best_rating}")
+        if len(highest_rated_movies) == 1:
+            print(f"Highest rated movie: {highest_rated_movies[0]} (Rating: {highest_rating})")
         else:
-            print(f"Best movies: {', '.join(best_movies)}, {best_rating}")
+            print(f"Highest rated movies: {', '.join(highest_rated_movies)} (Rating: {highest_rating})")
 
-        worst_rating = min(info["rating"] for info in movies.values())
-        worst_movies = [title for title, info in movies.items() if
-                        info["rating"] == worst_rating]
+        lowest_rating = min(float(info["rating"]) for info in movies.values())
+        lowest_rated_movies = [title for title, info in movies.items() if float(info["rating"]) == lowest_rating]
 
-        if len(worst_movies) == 1:
-            print(f"Worst movie: {worst_movies[0]}, {worst_rating}")
+        if len(lowest_rated_movies) == 1:
+            print(f"Lowest rated movie: {lowest_rated_movies[0]} (Rating: {lowest_rating})")
         else:
-            print(f"Worst movies: {', '.join(worst_movies)}, {worst_rating}")
+            print(f"Lowest rated movies: {'; '.join(lowest_rated_movies)} (Rating: {lowest_rating})")
 
 
     def _command_get_random_movie(self):
@@ -184,7 +252,7 @@ class MovieApp:
         movies = self._json_storage.list_movies()
 
         while True:
-            title = input("Enter part of the movie name (or 'q' to cancel): ").casefold()
+            title = input("Enter part of the movie title (or 'q' to cancel): \n").casefold()
 
             if title.lower() == "q":
                 print("Action cancelled.")
@@ -195,20 +263,21 @@ class MovieApp:
                 print("Invalid input! Title cannot be empty.")
                 continue
 
-            break
+            # fuzzymatch module: using process.extract() to get best matches
+            best_matches = process.extract(title, movies.keys(), limit=5)
 
-        # fuzzymatch module: using process.extract() to get best matches
-        best_matches = process.extract(title, movies.keys(), limit=5)
+            # manually filter matches based on score threshold
+            filtered_matches = [(movie, score) for movie, score in best_matches if score >= 70]
+            sorted_filtered_matches = sorted(filtered_matches, key=lambda item: item[1], reverse=True)
 
-        # manually filter matches based on score threshold
-        filtered_matches = [(movie, score) for movie, score in best_matches if score >= 70]
+            if sorted_filtered_matches:
+                for movie, score in sorted_filtered_matches:
+                    print(f"{movie} ({movies[movie]['year']}): {movies[movie]['rating']}")
+                break
 
-        if filtered_matches:
-            for movie, score in filtered_matches:
-                print(f"{movie} ({movies[movie]['year']}): {movies[movie]['rating']}")
-
-        else:
-            print(f"No matches found")
+            else:
+                print(f"No matches found, try again ...")
+                continue
 
 
     def _command_sort_movies_desc(self):
@@ -217,7 +286,7 @@ class MovieApp:
         """
         movies = self._json_storage.list_movies()
 
-        sorted_movie_list = sorted(movies.items(), key=lambda item: item[1]["rating"], reverse=True)
+        sorted_movie_list = sorted(movies.items(), key=lambda item: float(item[1]["rating"]), reverse=True)
         for movie in sorted_movie_list:
             print(f"{movie[0]}: {movie[1]['rating']}")
 
