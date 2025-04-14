@@ -1,1 +1,40 @@
-{"Title": "Anora", "Year": "2024", "Rated": "R", "Released": "08 Nov 2024", "Runtime": "139 min", "Genre": "Comedy, Drama, Romance", "Director": "Sean Baker", "Writer": "Sean Baker", "Actors": "Mikey Madison, Paul Weissman, Yura Borisov", "Plot": "A young stripper from Brooklyn meets and impulsively marries the son of a Russian oligarch. Once the news reaches Russia, her fairy tale is threatened as his parents set out for New York to get the marriage annulled.", "Language": "English, Russian, Armenian", "Country": "United States", "Awards": "Won 5 Oscars. 150 wins & 272 nominations total", "Poster": "https://m.media-amazon.com/images/M/MV5BYThiN2M0NTItODRmNC00NDhlLWFiYTgtMWM2YTEyYzI3ZTY1XkEyXkFqcGc@._V1_SX300.jpg", "Ratings": [{"Source": "Internet Movie Database", "Value": "7.5/10"}, {"Source": "Rotten Tomatoes", "Value": "93%"}, {"Source": "Metacritic", "Value": "91/100"}], "Metascore": "91", "imdbRating": "7.5", "imdbVotes": "176,420", "imdbID": "tt28607951", "Type": "movie", "DVD": "N/A", "BoxOffice": "$20,474,295", "Production": "N/A", "Website": "N/A", "Response": "True"}
+{
+    "Title": "Lawrence of Arabia",
+    "Year": "1962",
+    "Rated": "PG",
+    "Released": "02 Apr 2013",
+    "Runtime": "227 min",
+    "Genre": "Adventure, Biography, Drama",
+    "Director": "David Lean",
+    "Writer": "Robert Bolt, Michael Wilson",
+    "Actors": "Peter O'Toole, Alec Guinness, Anthony Quinn",
+    "Plot": "The story of T.E. Lawrence, the English officer who successfully united and led the diverse, often warring, Arab tribes during World War I in order to fight the Turks.",
+    "Language": "English, Arabic, Turkish",
+    "Country": "United Kingdom, United States",
+    "Awards": "Won 7 Oscars. 31 wins & 14 nominations total",
+    "Poster": "https://m.media-amazon.com/images/M/MV5BYjY0YTQ1OTAtYjEyNy00NTQ4LThlMTQtM2QwYTVhYWFhNjU5XkEyXkFqcGc@._V1_SX300.jpg",
+    "Ratings": [
+        {
+            "Source": "Internet Movie Database",
+            "Value": "8.3/10"
+        },
+        {
+            "Source": "Rotten Tomatoes",
+            "Value": "93%"
+        },
+        {
+            "Source": "Metacritic",
+            "Value": "100/100"
+        }
+    ],
+    "Metascore": "100",
+    "imdbRating": "8.3",
+    "imdbVotes": "327,088",
+    "imdbID": "tt0056172",
+    "Type": "movie",
+    "DVD": "N/A",
+    "BoxOffice": "$45,306,425",
+    "Production": "N/A",
+    "Website": "N/A",
+    "Response": "True"
+}
