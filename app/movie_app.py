@@ -1,7 +1,6 @@
 import random
 from fuzzywuzzy import process
-import datetime
-import omdb_api
+import api.omdb_api
 
 
 class MovieApp:
@@ -45,7 +44,7 @@ class MovieApp:
                 continue
 
             try:
-                movie_data = omdb_api.get_movie_data(user_input)
+                movie_data = api.omdb_api.get_movie_data(user_input)
                 break
 
             except ValueError as e:
@@ -299,7 +298,7 @@ class MovieApp:
         <html>
         <head>
             <title>My Movie App</title>
-            <link rel="stylesheet" href="style.css"/>
+            <link rel="stylesheet" href="static/style.css"/>
         </head>
         <body>
         <div class="list-movies-title">
@@ -327,7 +326,7 @@ class MovieApp:
 
         full_html = html_template.format(movie_grid=movie_grid)
 
-        with open("index.html", "w", encoding="utf-8") as handle:
+        with open("static/index.html", "w", encoding="utf-8") as handle:
             handle.write(full_html)
 
         print("Website was generated successfully.")

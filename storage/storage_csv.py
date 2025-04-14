@@ -1,17 +1,17 @@
-from istorage import IStorage
+from storage.istorage import IStorage
 import csv
 import os
 
 
 class StorageCsv(IStorage):
-    def __init__(self, file_path):
+    def __init__(self):
         """
-        Initialize the storage with the given file path.
-
-        Args:
-            file_path (str): Path to the CSV file storing movie data.
+        Initialize the storage by setting the CSV file path inside the data folder.
+        Creates an empty file if it doesn't exist.
         """
-        self._file_path = file_path
+        base_dir = os.path.dirname(__file__)
+        data_dir = os.path.join(base_dir, "..", "data")
+        self._file_path = os.path.join(data_dir, "movie_database.csv")
 
         # If file doesn't exist, create empty CSV file
         if not os.path.exists(self._file_path):
@@ -52,7 +52,7 @@ class StorageCsv(IStorage):
 
     def list_movies(self):
         """
-        List all movies stored in the CSV file.
+        Return all movies stored in the CSV file.
 
         Returns:
             dict: A dictionary of movie titles and
@@ -102,7 +102,7 @@ class StorageCsv(IStorage):
 
     def add_movie(self, title, year, rating, poster):
         """
-        Add a new movie to the storage.
+        Add a new movie to the storage if it doesn't already exist.
 
         Args:
             title (str): The title of the movie.

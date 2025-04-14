@@ -1,17 +1,19 @@
-from istorage import IStorage
+from storage.istorage import IStorage
 import json
 import os
 
 
 class StorageJson(IStorage):
-    def __init__(self, file_path):
+    def __init__(self):
         """
-        Initialize the storage with the given file path.
-
-        Args:
-            file_path (str): Path to the JSON file storing movie data.
+        Initialize the storage by setting the JSON file path inside the data folder.
+        Creates an empty file if it doesn't exist.
         """
-        self._file_path = file_path
+        # Gets the folder path where <storage_json.py> is located
+        base_dir = os.path.dirname(__file__)
+        # Go up from </storage> folder (".."), then go into the data/ folder
+        data_dir = os.path.join(base_dir, "..", "data")
+        self._file_path = os.path.join(data_dir, "movie_database.json")
 
         # If file doesn't exist, create empty JSON file
         if not os.path.exists(self._file_path):
@@ -36,7 +38,7 @@ class StorageJson(IStorage):
 
     def list_movies(self):
         """
-        List all movies stored in the JSON file.
+        Return all movies stored in the JSON file.
 
         Returns:
             dict: A dictionary of movie titles and
@@ -72,7 +74,7 @@ class StorageJson(IStorage):
 
     def add_movie(self, title, year, rating, poster):
         """
-        Add a new movie to the storage.
+        Add a new movie to the storage if it doesn't already exist.
 
         Args:
             title (str): The title of the movie.
