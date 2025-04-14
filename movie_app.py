@@ -151,7 +151,7 @@ class MovieApp:
                 continue
 
         while True:
-            user_choice = input("\nChoose the movie by entering the number (or 'q' to cancel): ").strip()
+            user_choice = input("\nChoose the movie to update by entering the number (or 'q' to cancel): ").strip()
 
             if user_choice.lower() == "q":
                 print("Action cancelled.")
