@@ -226,7 +226,42 @@ class MovieApp:
         """
         Generate a website displaying the movie database.
         """
-        pass
+        html_template = """
+        <html>
+        <head>
+            <title>My Movie App</title>
+            <link rel="stylesheet" href="style.css"/>
+        </head>
+        <body>
+        <div class="list-movies-title">
+            <h1>I LOVE CINEMA</h1>
+        </div>
+        <div>
+            <ol class="movie-grid">
+                {movie_grid}
+            </ol>
+        </div>
+        </body>
+        </html>"""
+
+        movies = self._json_storage.list_movies()
+        movie_grid = ""
+
+        for title, info in movies.items():
+            movie_grid += f"""
+            <div class="movie">
+                <img class="movie-poster" src="{info["poster"]}" title="">
+                <div class="movie-title">{title}</div>
+                <div class="movie-year">{info["year"]}</div>
+                <div class="movie-year">{info["rating"]}</div>
+            </div>"""
+
+        full_html = html_template.format(movie_grid=movie_grid)
+
+        with open("index.html", "w", encoding="utf-8") as handle:
+            handle.write(full_html)
+
+        print("Website was generated successfully.")
 
 
     def run(self):
