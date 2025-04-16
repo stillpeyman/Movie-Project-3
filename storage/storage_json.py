@@ -4,7 +4,7 @@ import os
 
 
 class StorageJson(IStorage):
-    def __init__(self):
+    def __init__(self, filename):
         """
         Initialize the storage by setting the JSON file path inside the data folder.
         Creates an empty file if it doesn't exist.
@@ -13,7 +13,7 @@ class StorageJson(IStorage):
         base_dir = os.path.dirname(__file__)
         # Go up from </storage> folder (".."), then go into the data/ folder
         data_dir = os.path.join(base_dir, "..", "data")
-        self._file_path = os.path.join(data_dir, "movie_database.json")
+        self._file_path = os.path.join(data_dir, filename)
 
         # If file doesn't exist, create empty JSON file
         if not os.path.exists(self._file_path):

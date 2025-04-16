@@ -4,14 +4,14 @@ import os
 
 
 class StorageCsv(IStorage):
-    def __init__(self):
+    def __init__(self, filename):
         """
         Initialize the storage by setting the CSV file path inside the data folder.
         Creates an empty file if it doesn't exist.
         """
         base_dir = os.path.dirname(__file__)
         data_dir = os.path.join(base_dir, "..", "data")
-        self._file_path = os.path.join(data_dir, "movie_database.csv")
+        self._file_path = os.path.join(data_dir, filename)
 
         # If file doesn't exist, create empty CSV file
         if not os.path.exists(self._file_path):

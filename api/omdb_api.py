@@ -35,12 +35,12 @@ def get_movie_data(title):
             with open("response.json", "w", encoding="utf-8") as handle:
                 json.dump(movie_data, handle, indent=4)
 
-            with open("response.csv", "w", encoding="utf-8", newline="") as handle:
-                fieldnames = movie_data.keys()
-
-                writer = csv.DictWriter(handle, fieldnames=fieldnames)
-                writer.writeheader()
-                writer.writerow(movie_data)
+            # with open("response.csv", "w", encoding="utf-8", newline="") as handle:
+            #     fieldnames = movie_data.keys()
+            #
+            #     writer = csv.DictWriter(handle, fieldnames=fieldnames)
+            #     writer.writeheader()
+            #     writer.writerow(movie_data)
 
             return movie_data
 
