@@ -1,0 +1,23 @@
+{
+    "Anora": {
+        "year": "2024",
+        "rating": "7.5",
+        "poster": "https://m.media-amazon.com/images/M/MV5BYThiN2M0NTItODRmNC00NDhlLWFiYTgtMWM2YTEyYzI3ZTY1XkEyXkFqcGc@._V1_SX300.jpg",
+        "imdb_id": "tt28607951",
+        "notes": "FAVE MOVIE 2024!"
+    },
+    "Get Out": {
+        "year": "2017",
+        "rating": "7.8",
+        "poster": "https://m.media-amazon.com/images/M/MV5BMjUxMDQwNjcyNl5BMl5BanBnXkFtZTgwNzcwMzc0MTI@._V1_SX300.jpg",
+        "imdb_id": "tt5052448",
+        "notes": "KILLER!!!"
+    },
+    "The Brutalist": {
+        "year": "2024",
+        "rating": "7.4",
+        "poster": "https://m.media-amazon.com/images/M/MV5BM2U0MWRjZTMtMDVhNC00MzY4LTgwOTktZGQ2MDdiYTI4OWMxXkEyXkFqcGc@._V1_SX300.jpg",
+        "imdb_id": "tt8999762",
+        "notes": "WHAT AN OPENING SCENE!!!"
+    }
+}

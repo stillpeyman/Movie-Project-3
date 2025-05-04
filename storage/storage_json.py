@@ -9,11 +9,16 @@ class StorageJson(IStorage):
         Initialize the storage by setting the JSON file path inside the data folder.
         Creates an empty file if it doesn't exist.
         """
-        # Gets the folder path where <storage_json.py> is located
+        # Get the folder path where <storage_json.py> is located
         base_dir = os.path.dirname(__file__)
         # Go up from </storage> folder (".."), then go into the data/ folder
-        data_dir = os.path.join(base_dir, "..", "data")
+        data_dir = os.path.abspath(os.path.join(base_dir, "..", "data"))
+
+        # Only use basename to avoid double directory, e.g. 'data'
+        filename = os.path.basename(filename)
+
         self._file_path = os.path.join(data_dir, filename)
+        # print(f"Looking for file at: {self._file_path}")
 
         # If file doesn't exist, create empty JSON file
         if not os.path.exists(self._file_path):
@@ -24,6 +29,9 @@ class StorageJson(IStorage):
         """
         Create an empty JSON file if it doesn't exist.
         """
+        # <os.makedirs> – Create dir (and necessary parent dirs) unless already existing
+        # <os.path.dirname> – gets dir part of the file path (~/.../250411_CODIO_Movie_Phase_3/data)
+        os.makedirs(os.path.dirname(self._file_path), exist_ok=True)
         with open(self._file_path, "w", encoding="utf-8") as handle:
             json.dump({}, handle, indent=4)
 
@@ -51,6 +59,7 @@ class StorageJson(IStorage):
         with open(self._file_path, "r", encoding="utf-8") as handle:
             try:
                 movies = json.load(handle)
+
             except json.JSONDecodeError:
                 # If file is empty or contains invalid JSON, return empty dict
                 movies = {}
@@ -72,20 +81,28 @@ class StorageJson(IStorage):
         return title in movies
 
 
-    def add_movie(self, title, year, rating, poster):
+    def add_movie(self, title, year, rating, poster, imdb_id):
         """
         Add a new movie to the storage if it doesn't already exist.
 
         Args:
             title (str): The title of the movie.
             year (int): The year the movie was released.
-            rating (float): The movie's rating.
+            rating (str): The movie's rating.
             poster (str): The URL to the movie's poster image.
+            imdb_id (str): imdbID of a movie title.
         """
         movies = self.list_movies()
 
         if not self.movie_exist(title):
-            movies[title] = {"year": year, "rating": rating, "poster": poster}
+            movies[title] = {
+                "year": year,
+                "rating": rating,
+                "poster": poster,
+                "imdb_id": imdb_id,
+                "notes": ""
+            }
+
         else:
             print(f"Movie '{title}' already exists.")
 
@@ -110,13 +127,15 @@ class StorageJson(IStorage):
         self._save_to_file(movies)
 
 
-    def update_movie(self, title, rating):
+    def update_movie(self, title, rating, notes):
         """
         Update the rating of an existing movie in the storage.
+        Add movies notes to an existing movie in the storage.
 
         Args:
             title (str): The title of the movie to update.
             rating (float): The new rating of the movie.
+            notes (str): movie notes.
         """
         movies = self.list_movies()
 
@@ -124,5 +143,6 @@ class StorageJson(IStorage):
             print(f"Movie '{title}' not found.")
         else:
             movies[title].update({"rating": rating})
+            movies[title] ["notes"] = notes
 
         self._save_to_file(movies)

@@ -19,7 +19,8 @@ class MovieApp:
         movies = self._data_storage.list_movies()
         print(f"{len(movies)} movies in total:")
         for title, info in movies.items():
-            print(f"{title} ({info['year']}): {info['rating']}")
+            notes = info.get("notes", "")
+            print(f"{title} ({info['year']}): {info['rating']} | Notes: {notes}")
 
 
     def _command_add_movie(self):
@@ -28,7 +29,7 @@ class MovieApp:
         new movie and adds it to the storage.
         """
         while True:
-            user_input = input("Enter new movie name (or 'q' to cancel): ").title()
+            user_input = input("Enter new movie name (or 'q' to cancel): ").title().strip()
 
             if user_input.lower() == 'q':
                 print("Action cancelled.")
@@ -40,17 +41,29 @@ class MovieApp:
                 continue
 
             if self._data_storage.movie_exist(user_input):
+                print(f"Movie {user_input} already exists in database.")
                 continue
 
             try:
                 movie_data = api.omdb_api.get_movie_data(user_input)
                 break
 
+            # Catch ValueErrors from get_movie_data() in omdb_api.py
             except ValueError as e:
                 print(f"{str(e)}")
                 continue
 
-        self._data_storage.add_movie(movie_data["Title"], movie_data["Year"], movie_data["imdbRating"], movie_data["Poster"])
+            except Exception as e:
+                print(f"An unexpected error occurred: {e}")
+                continue
+
+        self._data_storage.add_movie(
+            movie_data["Title"],
+            movie_data["Year"],
+            movie_data["imdbRating"],
+            movie_data["Poster"],
+            movie_data["imdbID"]
+        )
         print(f"Movie {user_input} successfully added")
 
 
@@ -62,7 +75,7 @@ class MovieApp:
         movies = self._data_storage.list_movies()
 
         while True:
-            user_input = input("Enter part of the movie title (or 'q' to cancel): ").casefold()
+            user_input = input("Enter part of the movie title (or 'q' to cancel): ").casefold().strip()
 
             if user_input.lower() == "q":
                 print("Action cancelled.")
@@ -117,9 +130,12 @@ class MovieApp:
         Prompt user to update the rating of an existing movie.
         """
         movies = self._data_storage.list_movies()
+        movie_to_update = ""
+        new_rating = ""
+        movies_notes = ""
 
         while True:
-            user_input = input("Enter part of the movie title (or 'q' to cancel): ").casefold()
+            user_input = input("Enter part of the movie title (or 'q' to cancel): ").casefold().strip()
 
             if user_input.lower() == "q":
                 print("Action cancelled.")
@@ -169,23 +185,40 @@ class MovieApp:
 
         while True:
             try:
-                rating = input("\nEnter a new rating between 0 and 10 (or 'q' to cancel): ")
+                rating = input("\nEnter a new rating between 0 and 10 ('q' to cancel, 'c' to continue): ").strip()
 
                 if rating.lower() == "q":
                     print("Action cancelled.")
                     return
 
+                if rating.lower() == "c":
+                    new_rating = movies[movie_to_update]["rating"]
+                    break
+
                 new_rating = float(rating.replace(",", "."))
                 if not 0 <= new_rating <= 10:
                     print(f"Invalid rating! Please enter a number between 0 and 10.")
                     continue
-
-                self._data_storage.update_movie(movie_to_update, str(new_rating))
-                print(f"Movie {movie_to_update} successfully updated")
+                new_rating = str(new_rating)
                 break
 
             except ValueError:
                 print("Invalid rating! Please enter a number between 0 and 10.")
+
+        while True:
+            movies_notes = input("Enter movie notes if you like or 'q' to exit the update: ").strip()
+
+            if movies_notes.lower() == "q":
+                print("No movies notes added.")
+                break
+
+            if not movies_notes.strip():
+                print("Please write something or 'q' if you wish to exit.")
+                continue
+            break
+
+        self._data_storage.update_movie(movie_to_update, new_rating, movies_notes)
+        print(f"Movie {movie_to_update} successfully updated!")
 
 
     def _command_movie_stats(self):
@@ -290,37 +323,33 @@ class MovieApp:
         """
         Generate a website displaying the movie database.
         """
-        html_template = """
-        <html>
-        <head>
-            <title>My Movie App</title>
-            <link rel="stylesheet" href="static/style.css"/>
-        </head>
-        <body>
-        <div class="list-movies-title">
-            <h1>I LOVE CINEMA</h1>
-        </div>
-        <div>
-            <ol class="movie-grid">
-                {movie_grid}
-            </ol>
-        </div>
-        </body>
-        </html>"""
+        # Read the HTML template from a file
+        with open("static/index_template.html", "r", encoding="utf-8") as handle:
+            html_template = handle.read()
 
         movies = self._data_storage.list_movies()
-        movie_grid = ""
+        movie_items = []
 
         for title, info in movies.items():
-            movie_grid += f"""
+            note = info.get("notes", "")
+            imdb_id = info.get("imdb_id")
+            imdb_url = f"https://www.imdb.com/title/{imdb_id}"
+            movie_items.append(f"""
+        <li>
             <div class="movie">
-                <img class="movie-poster" src="{info["poster"]}" title="">
+                <a href="{imdb_url}" target="_blank">
+                    <img class="movie-poster" src="{info["poster"]}" title="{note}">
+                </a>
                 <div class="movie-title">{title}</div>
                 <div class="movie-year">{info["year"]}</div>
-                <div class="movie-year">{info["rating"]}</div>
-            </div>"""
+                <div class="movie-rating">{info["rating"]}</div>
+            </div>
+        </li>""")
 
-        full_html = html_template.format(movie_grid=movie_grid)
+        movie_grid = "\n".join(movie_items)
+
+        full_html = html_template.replace("__TEMPLATE_TITLE__", "I LOVE CINEMA")
+        full_html = full_html.replace("__TEMPLATE_MOVIE_GRID__", movie_grid)
 
         with open("static/index.html", "w", encoding="utf-8") as handle:
             handle.write(full_html)
@@ -361,7 +390,7 @@ class MovieApp:
         while True:
             print(f"{10 * '*'} My Movies Database {10 * '*'}")
             print(menu)
-            user_input = input("Enter choice (0-8): ").strip()
+            user_input = input("Enter choice (0-9): ").strip()
             # Ignore empty input
             if not user_input:
                 continue

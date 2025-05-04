@@ -6,17 +6,22 @@ determines the file type, initializes the appropriate storage class,
 and launches the MovieApp.
 
 Usage:
-    python3 main.py <filename.json|filename.csv>
+    python3 -m app.main <filename.json|filename.csv>
 
 Example:
-    python3 main.py movies.json
+    python3 -m app.main movies.json
 """
 
 import os.path
+import sys
 from app.movie_app import MovieApp
 from storage.storage_json import StorageJson
 from storage.storage_csv import StorageCsv
 import argparse
+
+
+# Add parent directory to sys.path (list of directories Python searches when trying to import modules)
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
 
 if __name__ == "__main__":
@@ -40,7 +45,7 @@ if __name__ == "__main__":
         storage = StorageCsv(filename)
 
     else:
-        print("unsupported file type. Please use a .json or .csv file.")
+        print("Unsupported file type. Please use a .json or .csv file.")
 
     # Initialize the app with storage objects
     movie_app = MovieApp(storage)
