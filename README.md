@@ -61,7 +61,7 @@ movie_app/
      ```
    - For Windows:
      ```
-     venv\Scriptsctivate
+     venv\Scripts\activate
      ```
 
 5. Install the required dependencies:
