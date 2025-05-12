@@ -74,13 +74,14 @@ movie_app/
 
 ### Running the App
 
-1. To run the app and generate the website, execute the following command:
+To run the app and generate the website, execute the following command:
 
-   ```
-   python app/main.py
-   ```
+```
+python3 -m app.main <filename.json|filename.csv>
+```
 
-2. The app will generate a `static/index.html` file with the list of movies, including posters, titles, years, and ratings.
+- Replace `<filename.json|filename.csv>` with the path to your movie data file (either `movies.json` or `movies.csv`).
+- The app will process the movie data and generate a `static/index.html` file with the list of movies, including posters, titles, years, and ratings.
 
 ### Adding or Updating Movies
 
